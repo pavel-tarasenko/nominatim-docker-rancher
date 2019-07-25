@@ -16,6 +16,9 @@ spec:
       maxUnavailable: 0
     type: RollingUpdate
   template:
+    metadata:
+      labels:
+        app: nominatim-docker         
     spec:
       containers:
       - args:
