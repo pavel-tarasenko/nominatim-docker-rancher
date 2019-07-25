@@ -2,6 +2,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: nominatim-docker-service
+  namespace: default
 spec:
   selector:
     app: nominatim-docker
@@ -15,6 +16,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nominatim-docker-deployemnt
+  namespace: default
   labels:
     app: nominatim-docker
 spec:
