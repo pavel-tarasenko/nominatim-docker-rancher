@@ -13,7 +13,7 @@ spec:
       targetPort: 8080
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: Job
 metadata:
   name: nominatim-docker
   namespace: default
@@ -32,6 +32,10 @@ spec:
       imagePullSecrets:
       - name: pipeline-docker-registry
       containers:
+      - args:
+        - /bin/bash
+        - -c
+        - rm -rf /data/postgresdata && curl -L https://download.geofabrik.de/europe/monaco-latest.osm.pbf -o /data/extract.osm.pbf && cd /app && ./init-rancher.sh /data/extract.osm.pbf postgresdata 4
       - name: nominatim-docker-app
         image: ${CICD_IMAGE}:${CICD_EXECUTION_SEQUENCE}
         ports:
