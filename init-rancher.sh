@@ -8,7 +8,7 @@ chown postgres:postgres /data/$PGDIR && \
 
 export  PGDATA=/data/$PGDIR  && \
 sudo -u postgres /usr/lib/postgresql/11/bin/initdb -D /data/$PGDIR && \
-optimize-postgres.sh /data/$PGDIR/postgresql.conf && \
+/app/optimize-postgres.sh /data/$PGDIR/postgresql.conf && \
 sudo -u postgres /usr/lib/postgresql/11/bin/pg_ctl -D /data/$PGDIR start && \
 sudo -u postgres psql postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='nominatim'" | grep -q 1 || sudo -u postgres createuser -s nominatim && \
 sudo -u postgres psql postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='www-data'" | grep -q 1 || sudo -u postgres createuser -SDR www-data && \
