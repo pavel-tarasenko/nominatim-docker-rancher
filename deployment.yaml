@@ -1,0 +1,35 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: nominatim-docker-pipeline
+  namespace: default
+spec:
+  progressDeadlineSeconds: 6000
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      workload.user.cattle.io/workloadselector: deployment-default-nominatim-docker1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    spec:
+      containers:
+      - args:
+        - /bin/bash
+        - -c
+        - curl -L http://download.geofabrik.de/europe/monaco-latest.osm.pbf -o /data/extract.osm.pbf
+          && cd /app && ./init-rancher.sh /data/extract.osm.pbf postgresdata 4
+        image: ${CICD_IMAGE}:${CICD_EXECUTION_SEQUENCE}
+        imagePullPolicy: Always
+        name: nominatim-docker-pipeline
+        volumeMounts:
+        - mountPath: /data
+          name: vol1
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: 2019-07-24-nominatim-docker-pvc--ga-htz-fsn02
