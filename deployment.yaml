@@ -1,5 +1,5 @@
 kind: Service
-apiVersion: v1
+apiVersion: apps/v1beta2
 metadata:
   name: nominatim-docker-service
   namespace: default
@@ -12,7 +12,7 @@ spec:
       port: 8080
       targetPort: 8080
 ---
-apiVersion: apps/v1
+apiVersion: apps/v1beta2
 kind: Job
 metadata:
   name: nominatim-docker
