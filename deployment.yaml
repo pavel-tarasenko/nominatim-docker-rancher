@@ -5,7 +5,7 @@ metadata:
   namespace: default
 spec:
   selector:
-    app: nominatim-docker
+    app: nominatim-docker-app
   type: NodePort
   ports:
     - protocol: TCP
@@ -15,24 +15,24 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nominatim-docker-deployemnt
+  name: nominatim-docker
   namespace: default
   labels:
-    app: nominatim-docker
+    app: nominatim-docker-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: nominatim-docker
+      app: nominatim-docker-app
   template:
     metadata:
       labels:
-        app: nominatim-docker
+        app: nominatim-docker-app
     spec:
       imagePullSecrets:
       - name: pipeline-docker-registry
       containers:
-      - name: nominatim-docker
+      - name: nominatim-docker-app
         image: ${CICD_IMAGE}:${CICD_EXECUTION_SEQUENCE}
         ports:
         - containerPort: 8080
