@@ -1,34 +1,39 @@
-apiVersion: apps/v1beta2
+kind: Service
+apiVersion: v1
+metadata:
+  name: nominatim-docker-service
+spec:
+  selector:
+    app: nominatim-docker
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nominatim-docker-pipeline
-  namespace: default
+  name: nominatim-docker-deployemnt
+  labels:
+    app: nominatim-docker
 spec:
-  progressDeadlineSeconds: 6000
   replicas: 1
-  revisionHistoryLimit: 10
   selector:
     matchLabels:
-      workload.user.cattle.io/workloadselector: deployment-default-nominatim-docker1
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
-    type: RollingUpdate
+      app: nominatim-docker
   template:
     metadata:
       labels:
-        app: nominatim-docker         
+        app: nominatim-docker
     spec:
+      imagePullSecrets:
+      - name: pipeline-docker-registry
       containers:
-      - args:
-        - /bin/bash
-        - -c
-        - curl -L http://download.geofabrik.de/europe/monaco-latest.osm.pbf -o /data/extract.osm.pbf
-          && cd /app && ./init-rancher.sh /data/extract.osm.pbf postgresdata 4
+      - name: nominatim-docker
         image: ${CICD_IMAGE}:${CICD_EXECUTION_SEQUENCE}
-        imagePullPolicy: Always
-        name: nominatim-docker-pipeline
+        ports:
+        - containerPort: 8080
         volumeMounts:
         - mountPath: /data
           name: vol1
